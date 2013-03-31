@@ -96,12 +96,27 @@ $('#params_div input').live('keydown', function(event) {
 })
 
 // ===================================================
-//  Изменение параметра типов: строка, число,
-//    чекбокс
+//  Изменение инпутов, чекбоксов
 //
 // ===================================================
 $('#params_div input').live('change', function() {
 
+    // ========================  Выбор файла для загрузки
+    if ( $(this).attr('class') == 'input_file' ) {
+        var fileTitle = this.value;
+
+        reWin = /.*\\(.*)/;
+        fileTitle = fileTitle.replace(reWin, "$1");
+        reUnix = /.*\/(.*)/;
+        fileTitle = fileTitle.replace(reUnix, "$1");
+
+        var input = $( '#' + $(this).attr('for') )[0];
+        input.value = fileTitle;
+
+        return 1;
+    }
+
+    // ========================  Остальные параметры
     // Удалить сообщения об ошибках
     $(this).parent().removeClass( 'error' );
     $(this).parent().find('.help-inline').remove();
@@ -242,22 +257,6 @@ $('#saveBtn').live('click', function () {
 
         sendCmd( cmd, cbSetParams );
     }
-});
-
-// ===================================================
-//  Выбор файла для загрузки
-//
-// ===================================================
-$('input.input_file').live( 'change', function() {
-    var fileTitle = this.value;
-
-    reWin = /.*\\(.*)/;
-    fileTitle = fileTitle.replace(reWin, "$1");
-    reUnix = /.*\/(.*)/;
-    fileTitle = fileTitle.replace(reUnix, "$1");
-
-    var input = $( '#' + $(this).attr('for') )[0];
-    input.value = fileTitle;
 });
 
 // ===================================================
@@ -577,10 +576,10 @@ function addControl(parent, paramName, attrs) {
             input_file = $('<input type="file" name="file">');
         }
         else {
-            $('<input type="text" clas="input-xlarge">')
-                .attr('value', '')
+            $('<input type="text" class="input-xlarge">')
+                .attr( 'value', ''     )
                 .attr( 'id', paramName )
-                .appendTo(parent);
+                .appendTo( parent      );
 
             input_file = $('<div class="input_file_wrap"><button class="btn browse_btn">...</button><input type="file" name="file" size="1" for="' + paramName + '" class="input_file"></div>');
 
