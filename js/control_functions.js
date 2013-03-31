@@ -431,8 +431,17 @@ function addParams(data) {
 
                 // Создание контейнера для таблицы
                 var table = add_table_container( group_key, curParams.get_group_comment(group_key), $accordion_inner );
-                $('<thead><tr><th>Параметр</th><th>Значение</th><th>Сбросить</th></tr></thead><tbody></tbody>')
-                    .appendTo( table ); // TODO определять необходимость заголовка "сбросить" динамически
+                var $t_header = $('<thead></thead>').appendTo( table );
+                var $tr  = $( '<tr></tr>' ).appendTo( $t_header );
+                var $th1 = $( '<th>Параметр</th>' ).appendTo( $tr );
+                var $th2 = $( '<th>Значение</th>' ).appendTo( $tr );
+                if ( params.has_cancelable_params() ) {
+                    var $th3 = $( '<th>Сбросить</th>' ).appendTo( $tr );
+                }
+                else {
+                    $th2.attr( 'colspan', 2 );
+                }
+                $( '<tbody></tbody>' ).appendTo( table );
 
                 // Заполнение таблицы с параметрами
                 for ( var i in sorted_keys ) {

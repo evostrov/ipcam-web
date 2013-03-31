@@ -271,6 +271,14 @@ function Params(data) {
     this.get_param = function (param) {
         return this.keys[param];
     }
+
+    // Есть параметры, которые можно сбрасывать
+    this.has_cancelable_params = function() {
+        for ( var key in this.keys ) {
+            if ( this.keys[key].is_cancelable() ) return 1;
+        }
+        return 0;
+    }
 }
 
 
@@ -286,8 +294,10 @@ function Param( paramsObj, paramName ) {
     // Можно ли отменять изменение параметра
     this.is_cancelable = function () {
         if (
+            this.TYPE != undefined
+             &&
             this.TYPE !== "BUTTON"
-            &&
+             &&
             this.TYPE !== "FILE"
         ) {
             return 1;
