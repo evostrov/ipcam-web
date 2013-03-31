@@ -162,6 +162,11 @@ $('#params_div input').live('change', function() {
                 $(this).parent().append( '<span class="help-inline">Максимальное значение для этого параметра: ' + DATA_TYPES[ cur_param_type ].MAX + '</span>' );
                 this.value = DATA_TYPES[ cur_param_type ].MAX;
             }
+
+            // Добавление милисекунд для DATETIME
+            if ( cur_param_type == "DATETIME" ) {
+                this.value = this.value + ':0.000';
+            }
         }
 
         newParams.get_group_params(param_group_name).get_param(param_name).set_attr( 'VALUE', this.value );
@@ -634,14 +639,17 @@ function addControl(parent, paramName, attrs) {
     else {
         // Создание обычного инпута для чисел, строки и даты
         var input = $('<input type="text" >')
-            .attr('value', attrs.VALUE)
             .attr( 'id', paramName )
             .appendTo(parent);
 
         // Инициализация календаря
         if ( attrs.TYPE == 'DATETIME' ) {
             $( 'input#' + paramName ).datetimepicker();
+            input.datepicker( "option", "dateFormat", "dd/mm/yy" );
         }
+
+        // После указания формата для datepicker формата
+        input.attr( 'value', attrs.VALUE );
 
         // Определить размер поля в зависимости от типа данных
         if ( attrs.TYPE == 'STRING' ) {
