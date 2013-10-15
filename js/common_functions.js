@@ -1,6 +1,6 @@
 // Отправить команду на сервер
 // Отправка файлов выполняется не здесь, а по клику на submit
-function sendCmd(params, callback) {
+function sendCmdAjax(params, callback) {
     var cmd = "/?action=command"
     if (params) {
         for (var key in params) {
@@ -12,6 +12,13 @@ function sendCmd(params, callback) {
     }
 
     $.getJSON(cmd, callback).error( error_handler );
+}
+
+// Получить с сервера файл
+// file_cmd - команда для получения файла
+function getFile(file_cmd, callback) {
+    var cmd = "http://192.168.1.36:81/?action=command&COMMAND=" + file_cmd;
+    document.location.href = cmd;
 }
 
 // Обработка ошибки getJSON
@@ -46,7 +53,7 @@ function show_loader(type, msg) {
         backdrop: 'static'
     });
 
-    $('#loaderModalBody').prepend( 
+    $('#loaderModalBody').prepend(
         $('<span class="modal_msg">' + msg + '</span>').css({
             display: 'block',
             'margin-bottom': '5px',
@@ -58,8 +65,8 @@ function show_loader(type, msg) {
 
 function hide_loader(type) {
     //хак для скрытия элементов страницы при инициализации
-    if ( type == 'init' ) { 
-        $('div.startLoaderWrap').css({ display: 'none' }); 
+    if ( type == 'init' ) {
+        $('div.startLoaderWrap').css({ display: 'none' });
     }
 
     $('#loaderModal').modal('hide');

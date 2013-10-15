@@ -8,7 +8,7 @@ $(document).ready(function() {
     show_loader('init', 'Загрузка');
 
     // Запрос списка каналов
-    sendCmd( {'COMMAND': 'CMD_GET_CHANNELS_LIST'}, addChannels );
+    sendCmdAjax( {'COMMAND': 'CMD_GET_CHANNELS_LIST'}, addChannels );
 });
 
 // ===================================================
@@ -24,7 +24,7 @@ $('.nav-list li').live('click', function(){
     // Включить анимацию отправки данных
     show_loader( 'send', 'Сохранение изменений' );
     // Отправка запроса параметров модуля
-    sendCmd( {'COMMAND': 'CMD_GET_PARAMS', 'CHANNEL_ID': $(this).attr('chanid'), 'MODULE_NAME': $(this).attr('modname') }, addParams );
+    sendCmdAjax( {'COMMAND': 'CMD_GET_PARAMS', 'CHANNEL_ID': $(this).attr('chanid'), 'MODULE_NAME': $(this).attr('modname') }, addParams );
     // Сохранить выбранный модуль
     curMod = $(this).attr('modname');
     curChanID = $(this).attr('chanid');
@@ -35,7 +35,7 @@ $('.nav-list li').live('click', function(){
 //
 // ===================================================
 $('#accordion1 .accordion-heading').live('click', function(event){
-    sendCmd( {'COMMAND': 'CMD_GET_MODULES_LIST', 'CHANNEL_LIST_ID': this.id }, addModules ); //Отправка команды на получение списка модулей канала
+    sendCmdAjax( {'COMMAND': 'CMD_GET_MODULES_LIST', 'CHANNEL_LIST_ID': this.id }, addModules ); //Отправка команды на получение списка модулей канала
 });
 
 // ===================================================
@@ -47,7 +47,7 @@ $('.param_btn').live('click', function(event){
     // Включить анимацию отправки данных
     show_loader( 'send', $(this).attr('id') );
 
-    sendCmd(
+    sendCmdAjax(
         { 'COMMAND': $(this).attr('id') },
         function(data) {
             // Очистка контентной области
@@ -57,7 +57,7 @@ $('.param_btn').live('click', function(event){
 
             // Если запрос выполнен успешно
             if ( check_result(data) ) {
-                sendCmd( {'COMMAND': 'CMD_GET_PARAMS', 'CHANNEL_ID': curChanID, 'MODULE_NAME': curMod }, addParams );
+                sendCmdAjax( {'COMMAND': 'CMD_GET_PARAMS', 'CHANNEL_ID': curChanID, 'MODULE_NAME': curMod }, addParams );
             }
             else {
                 myAlert( data.RESULT.VALUE.TEXT.VALUE, data.RESULT.VALUE.MESSAGE.VALUE, 'alert-error' );
@@ -65,6 +65,10 @@ $('.param_btn').live('click', function(event){
         }
     );
 
+    return false;
+});
+$('.file_button').live('click', function(event){
+    getFile( $(this).attr('id') );
     return false;
 });
 
@@ -260,7 +264,7 @@ $('#saveBtn').live('click', function () {
             });
         }
 
-        sendCmd( cmd, cbSetParams );
+        sendCmdAjax( cmd, cbSetParams );
     }
 });
 
@@ -578,11 +582,26 @@ function addControl(parent, paramName, attrs) {
             // // bind form using 'ajaxForm'
             // $(form).ajaxForm(options);
 
+// TODO DELETE if
+if ( paramName == 'CMD_GET_CONFIG' ) {
+            var btn = $('<button>' + attrs.VALUE + '</button>')
+            .attr( 'id', paramName )
+            .attr( 'class', 'file_button' )
+            .appendTo(parent);
+}
+else {
             var btn = $('<button>' + attrs.VALUE + '</button>')
                 .attr( 'id', paramName )
                 .attr( 'class', 'param_btn' )
                 .appendTo(parent);
+}
         }
+    }
+    else if ( attrs.TYPE == "FILE_BUTTON" ) {
+        var btn = $('<button>' + attrs.VALUE + '</button>')
+            .attr( 'id', paramName )
+            .attr( 'class', 'file_button' )
+            .appendTo(parent);
     }
     else if ( attrs.TYPE == "FILE" ) {
         var input_file;
