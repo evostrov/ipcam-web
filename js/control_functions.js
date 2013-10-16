@@ -582,19 +582,10 @@ function addControl(parent, paramName, attrs) {
             // // bind form using 'ajaxForm'
             // $(form).ajaxForm(options);
 
-// TODO DELETE if
-if ( paramName == 'CMD_GET_CONFIG' ) {
-            var btn = $('<button>' + attrs.VALUE + '</button>')
-            .attr( 'id', paramName )
-            .attr( 'class', 'file_button' )
-            .appendTo(parent);
-}
-else {
             var btn = $('<button>' + attrs.VALUE + '</button>')
                 .attr( 'id', paramName )
                 .attr( 'class', 'param_btn' )
                 .appendTo(parent);
-}
         }
     }
     else if ( attrs.TYPE == "FILE_BUTTON" ) {
