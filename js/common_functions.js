@@ -17,8 +17,12 @@ function sendCmdAjax(params, callback) {
 // Получить с сервера файл
 // file_cmd - команда для получения файла
 function getFile(file_cmd, callback) {
-    var cmd = "http://192.168.1.36:81/?action=command&COMMAND=" + file_cmd;
-    document.location.href = cmd;
+    var cmd = "/?action=command&COMMAND=" + file_cmd;
+    document.location.href = window.location.protocol
+                           + '//'
+                           + window.location.hostname
+                           + ( window.location.port ? ':' + window.location.port: '' )
+                           + cmd;
 }
 
 // Обработка ошибки getJSON
