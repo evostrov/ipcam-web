@@ -18,11 +18,29 @@ function sendCmdAjax(params, callback) {
 // file_cmd - команда для получения файла
 function getFile(file_cmd, callback) {
     var cmd = "/?action=command&COMMAND=" + file_cmd;
-    document.location.href = window.location.protocol
-                           + '//'
-                           + window.location.hostname
-                           + ( window.location.port ? ':' + window.location.port: '' )
-                           + cmd;
+    // document.location.href = window.location.protocol
+    //                        + '//'
+    //                        + window.location.hostname
+    //                        + ( window.location.port ? ':' + window.location.port: '' )
+    //                        + cmd;
+    $.ajax({
+        type    : 'GET',
+        url     : cmd,
+        success : function ( data, textStatus, request ) {
+                      if ( request.getResponseHeader('Content-type') == 'text/plain' ) {
+                          var res = JSON.parse(data);
+
+                          $('div.span9').empty();
+                          myAlert( res.RESULT.VALUE.TEXT.VALUE,
+                                   res.RESULT.VALUE.MESSAGE.VALUE,
+                                   'alert-error'
+                                 );
+                      }
+                      else if ( request.getResponseHeader('Content-type') == 'application/octet-stream' ) {
+                          alert('отдать файл!');
+                      }
+                  },
+    });
 }
 
 // Обработка ошибки getJSON
