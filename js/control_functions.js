@@ -57,7 +57,21 @@ $('.param_btn').live('click', function(event){
 
             // Если запрос выполнен успешно
             if ( check_result(data) ) {
-                sendCmdAjax( {'COMMAND': 'CMD_GET_PARAMS', 'CHANNEL_ID': curChanID, 'MODULE_NAME': curMod }, addParams );
+                if (    data.RESULT.VALUE.URL.TYPE == 'STRING'
+                     || data.RESULT.VALUE.URL.TYPE == 'FILE'
+                ) {
+                    // Если файл или url перейдем по ссылке
+                    document.location.href = window.location.protocol
+                       + '//'
+                       + window.location.hostname
+                       + ( window.location.port ? ':' + window.location.port: '' )
+                       + '/'
+                       + data.RESULT.VALUE.URL.VALUE;
+                }
+                else {
+                    // Получим параметры заново
+                    sendCmdAjax( {'COMMAND': 'CMD_GET_PARAMS', 'CHANNEL_ID': curChanID, 'MODULE_NAME': curMod }, addParams );
+                }
             }
             else {
                 myAlert( data.RESULT.VALUE.TEXT.VALUE, data.RESULT.VALUE.MESSAGE.VALUE, 'alert-error' );
@@ -65,10 +79,6 @@ $('.param_btn').live('click', function(event){
         }
     );
 
-    return false;
-});
-$('.file_button').live('click', function(event){
-    getFile( $(this).attr('id') );
     return false;
 });
 
@@ -587,12 +597,6 @@ function addControl(parent, paramName, attrs) {
                 .attr( 'class', 'param_btn' )
                 .appendTo(parent);
         }
-    }
-    else if ( attrs.TYPE == "FILE_BUTTON" ) {
-        var btn = $('<button>' + attrs.VALUE + '</button>')
-            .attr( 'id', paramName )
-            .attr( 'class', 'file_button' )
-            .appendTo(parent);
     }
     else if ( attrs.TYPE == "FILE" ) {
         var input_file;
