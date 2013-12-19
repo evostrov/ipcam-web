@@ -409,12 +409,6 @@ function addParams(data) {
 
     // Если запрос выполнен успешно
     if ( check_result(data) ) {
-        if ( ! check_data(data) ) {
-            $('div.span9').empty();
-            myAlert( 'ERROR', Error_code, 'alert-error' );
-            return;
-        }
-
         var parent = $('<div></div>').attr( 'id', 'params_div' ).appendTo( $('div.span9') );
         var $accordion = $('<div class="content-padding accordion" id="accordion2"></div>').appendTo(parent);
 
@@ -426,17 +420,16 @@ function addParams(data) {
 
         for ( var i in sorted_groups ) {
             var group_key = sorted_groups[i];
-            var group = curParams.keys[ group_key ];
+            var group     = curParams.keys[ group_key ];
 
             // ================== Создание таблицы параметров
-            var params = curParams.get_group_params(group_key);
+            var params      = curParams.get_group_params(group_key);
             var sorted_keys = params.get_sorted_keys();
 
-            var $accordion_group = $('<div class="accordion-group"></div>').appendTo($accordion);
+            var $accordion_group   = $('<div class="accordion-group"></div>').appendTo($accordion);
             var $accordion_heading = $('<div class="accordion-heading"></div>').appendTo($accordion_group);
 
             if ( ! $.isEmptyObject( params.keys ) ) {
-
                 // Добавление заголовка группы в аккордеон
                 $('<a>' + curParams.get_group_comment(group_key) + '</a>').attr( 'class', 'accordion-toggle' )
                     .attr( 'data-toggle', 'collapse' )
@@ -503,6 +496,9 @@ function addParams(data) {
             .appendTo( parent );
     }
     else {
+        // $('div.span9').empty();
+        // myAlert( 'ERROR', Error_code, 'alert-error' );
+        // return;
         myAlert( data.RESULT.VALUE.TEXT.VALUE, data.RESULT.VALUE.MESSAGE.VALUE, 'alert-error' );
     }
 }
