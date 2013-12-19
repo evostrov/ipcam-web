@@ -59,6 +59,7 @@
 
 .submit_btn {
 	margin-left: 5px;
+    vertical-align: top;
 }
 
 .input_file_wrap {
