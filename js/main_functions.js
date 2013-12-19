@@ -5,7 +5,7 @@ var heightRes = 0;
 var resizeBtn = true;
 
 function fullScrin(){
-    $(window).scrollTop(0); 
+    $(window).scrollTop(0);
     var pObj = $('#video_container');
     var pObjEmbd = $('#video_embed');
     widthRes = 320; //pObjEmbd.width();
@@ -34,31 +34,31 @@ function ResizeEmbed(){
 }
 
 function ScreenEmbed1(){
-    $(window).scrollTop(0); 
+    $(window).scrollTop(0);
     var pObjEmbd = $('#video_embed');
     pObjEmbd.width(video_embed.picwidth*2);
     pObjEmbd.height(video_embed.picheight*2);
 }
 function ScreenEmbed2(){
-    $(window).scrollTop(0); 
+    $(window).scrollTop(0);
     var pObjEmbd = $('#video_embed');
     pObjEmbd.width(video_embed.picwidth);
     pObjEmbd.height(video_embed.picheight);
 }
 function ScreenEmbed3(){
-    $(window).scrollTop(0); 
+    $(window).scrollTop(0);
     var pObjEmbd = $('#video_embed');
     pObjEmbd.width(video_embed.picwidth/2);
     pObjEmbd.height(video_embed.picheight/2);
 }
 function ScreenEmbed4(){
-    $(window).scrollTop(0); 
+    $(window).scrollTop(0);
     var pObjEmbd = $('#video_embed');
     pObjEmbd.width(320);
     pObjEmbd.height(240);
 }
 function ScreenNewURL(url){
-    $(window).scrollTop(0);  
+    $(window).scrollTop(0);
     $('#video_embed').attr( 'url', url);
 }
 
@@ -78,25 +78,25 @@ $(document).ready(function() {
 
 // Обработка ответа команды SET_PARAMS
 function cbSetParams(data) {
-    
+
     // Удалить анимацию отправки и показать таблицу с параметрами
     hide_loader('send');
-    
+
     // Вывести сообщение с результатом операции
     if ( !data.RESULT ) {
         myAlert( 'ERROR', 'Неверный формат ответа', 'alert-error' );
-    
+
     } else if (data.RESULT.VALUE.CODE.VALUE == 0) { // Успешное сохранение изменений
-        
-        myAlert( data.RESULT.VALUE.TEXT.VALUE, data.RESULT.VALUE.MESSAGE.VALUE, 'alert-success' ); 
-        
+
+        myAlert( data.RESULT.VALUE.TEXT.VALUE, data.RESULT.VALUE.MESSAGE.VALUE, 'alert-success' );
+
         // Деактивация кнопки "Сохранить изменения"
         $( '#saveBtn' ).addClass('btn disabled').attr( 'disabled', 'disabled' );
-        
+
         // Установить дефолтные значения в отправленные
         curParams = null;
         curParams = $.extend( true, curParams, newParams ); // Рекурсивное клонирование объекта
-    } 
+    }
     else { // fail
         myAlert( data.RESULT.VALUE.TEXT.VALUE, data.RESULT.VALUE.MESSAGE.VALUE, 'alert-error' );
     }
@@ -118,21 +118,21 @@ function add_video_control_form() {
         .attr( 'value', host )
         .attr( 'id', 'host' )
         .appendTo(
-            $('#video_control')
+            $('#server_settings')
         );
 
     $('<input type="text" class="input-small">')
         .attr( 'value', port )
         .attr( 'id', 'port' )
         .appendTo(
-            $('#video_control')
+            $('#server_settings')
         );
 
     $('<input type="text" class="input-small">')
         .attr( 'value', channel )
         .attr( 'id', 'channel' )
         .appendTo(
-            $('#video_control')
+            $('#server_settings')
         );
 
     var $btn_group = $('<div class="btn-group"></div>').appendTo( $('#video_control') );
@@ -149,8 +149,8 @@ function add_video_control_form() {
 
 // Запустить видео с параметрами из формы
 function get_url_from_vc_form() {
-    return 'rtsp://admin:admin@' + $('#host').val() + 
-        ':' + $('#port').val() + 
+    return 'rtsp://admin:admin@' + $('#host').val() +
+        ':' + $('#port').val() +
         '/' + $('#channel').val();
 }
 
@@ -158,12 +158,12 @@ function get_url_from_vc_form() {
 function video_capture_start(url) {
     video_capture_stop();
 
-    $( 
+    $(
         '<embed id="video_embed" ' +
         'type="application/mozilla-npivrtsp-scriptable-plugin" ' +
         'width=320 height=240 ' +
         'url="' + url + '" ' +
-        'autostart="true">' 
+        'autostart="true">'
     ).appendTo( $('#video_container') );
 }
 
