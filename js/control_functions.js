@@ -87,7 +87,10 @@ $('.param_btn').live('click', function(event){
 //  для ограничения возможных введеных символов
 //
 // ===================================================
-$('#params_div input').live('keydown', function(event) {
+$('#params_div input').live('keypress', function(event) {
+    // Используется событие keypress
+    // потому что в linux только так
+    // корректно обрабатываются коды клавиш
     var keyCode;
     if ( event.keyCode >= 96 && event.keyCode <= 105 ) {
         keyCode = event.keyCode - 48;
@@ -142,51 +145,81 @@ $('#params_div input').live('change', function() {
                 .get_param(param_name);
     var cur_param_type = param.get_type();
 
-    // Если цифровой или строковый инпут
+    // Проверка соответсвия всего выражения формату
     if (
-        cur_param_type == "DWORD"  || cur_param_type == "WORD"  || cur_param_type == "INT32"  ||
-        cur_param_type == "INT64"  || cur_param_type == "FLOAT" || cur_param_type == "DOUBLE" ||
-        cur_param_type == "STRING" || cur_param_type == "DATETIME"
+        ( cur_param_type == "DWORD"  || cur_param_type == "WORD"     ||
+          cur_param_type == "INT32"  || cur_param_type == "INT64"    ||
+          cur_param_type == "FLOAT"  || cur_param_type == "DOUBLE"   ||
+          cur_param_type == "STRING" || cur_param_type == "DATETIME"
+        )
+        && ! DATA_TYPES[ cur_param_type ].FORMAT.test( this.value )
     ) {
-        // Проверка соответсвия всего выражения формату
-        if( ! DATA_TYPES[ cur_param_type ].FORMAT.test( this.value ) )    {
-            // Если нет, то добавить сообщение об ошибке
-            if ( !$(this).parent().is( '.error' ) ) {
-                $(this).parent().addClass( 'error' );
-                $(this).parent().append( '<span class="help-inline">' +  DATA_TYPES[ cur_param_type ].HINT + '</span>' );
-            }
-            return false;
-        } else {
-            // Проверка превышения границ значений
-            if ( $(this).attr( 'for' ) == 'slider' ) {
-                // Проверить превышение границ диапозона значений, если есть превышение, то значение прировнять к граничному
-                if ( parseInt( this.value ) < parseInt( param.get_attr('MIN') ) ) {
-                    this.value = param.get_attr('MIN');
-                } else if ( parseInt( this.value ) > parseInt( param.get_attr('MAX') ) ) {
-                    this.value = param.get_attr('MAX');
-                }
-                // Установить значение слайдера равное значению инпута
-                $(this).parent().find('#slider-range-min').slider( "value", this.value );
-            } else if ( parseInt( this.value ) < parseInt( DATA_TYPES[ cur_param_type ].MIN ) ) {
-                $(this).parent().addClass( 'error' );
-                $(this).parent().append( '<span class="help-inline">Минимальное значение для этого параметра: ' + DATA_TYPES[ cur_param_type ].MIN + '</span>' );
-                this.value = DATA_TYPES[ cur_param_type ].MIN;
-            } else if ( parseInt( this.value ) > parseInt( DATA_TYPES[ cur_param_type ].MAX ) ) {
-                $(this).parent().addClass( 'error' );
-                $(this).parent().append( '<span class="help-inline">Максимальное значение для этого параметра: ' + DATA_TYPES[ cur_param_type ].MAX + '</span>' );
-                this.value = DATA_TYPES[ cur_param_type ].MAX;
-            }
+        // Если нет, то добавить сообщение об ошибке
+        if ( !$(this).parent().is( '.error' ) ) {
+            $(this).parent().addClass( 'error' );
+            $(this).parent().append( '<span class="help-inline">' +  DATA_TYPES[ cur_param_type ].HINT + '</span>' );
+        }
+        return false;
+    }
 
-            // Добавление милисекунд для DATETIME
-            if ( cur_param_type == "DATETIME" ) {
-                this.value = this.value + ':0.000';
+    // Проверка превышения границ значений
+    if (
+        cur_param_type == "DWORD"  || cur_param_type == "WORD"  ||
+        cur_param_type == "INT32"  || cur_param_type == "INT64" ||
+        cur_param_type == "FLOAT"  || cur_param_type == "DOUBLE"
+    ) {
+        // Для слайдера
+        if ( $(this).attr( 'for' ) == 'slider' ) {
+            // Проверить превышение границ диапозона значений, если есть превышение, то значение прировнять к граничному
+            if ( parseInt( this.value ) < parseInt( param.get_attr('MIN') ) ) {
+                this.value = param.get_attr('MIN');
+            } else if ( parseInt( this.value ) > parseInt( param.get_attr('MAX') ) ) {
+                this.value = param.get_attr('MAX');
             }
+            // Установить значение слайдера равное значению инпута
+            $(this).parent().find('#slider-range-min').slider( "value", this.value );
         }
 
-        newParams.get_group_params(param_group_name).get_param(param_name).set_attr( 'VALUE', this.value );
+        var cur_val;
+        var min_val;
+        var max_val;
+        if ( cur_param_type == "DWORD"  || cur_param_type == "WORD"  ||
+             cur_param_type == "INT32"  || cur_param_type == "INT64"
+        ) {
+            // Для целых чисел
+            cur_val = parseInt( this.value );
+            min_val = parseInt( DATA_TYPES[ cur_param_type ].MIN );
+            max_val = parseInt( DATA_TYPES[ cur_param_type ].MAX );
+        }
+        else if ( cur_param_type == "FLOAT" || cur_param_type == "DOUBLE" ) {
+            // Для чисел с плавающей запятой
+            cur_val = parseFloat( this.value );
+            min_val = parseFloat( DATA_TYPES[ cur_param_type ].MIN );
+            max_val = parseFloat( DATA_TYPES[ cur_param_type ].MAX );
+        }
+
+        if ( cur_val < min_val ) {
+            $(this).parent().addClass( 'error' );
+            $(this).parent().append( '<span class="help-inline">Минимальное значение для этого параметра: ' + min_val + '</span>' );
+            this.value = min_val;
+        }
+        else if ( cur_val > max_val ) {
+            $(this).parent().addClass( 'error' );
+            $(this).parent().append( '<span class="help-inline">Максимальное значение для этого параметра: ' + max_val + '</span>' );
+            this.value = max_val;
+        }
+
+        // Добавление милисекунд для DATETIME
+        if ( cur_param_type == "DATETIME" ) {
+            this.value = this.value + ':0.000';
+        }
     }
-    else if ( cur_param_type == "BOOL" ) { // Если чекбокс
+
+    if ( cur_param_type == "BOOL" ) { // Если чекбокс
         newParams.get_group_params(param_group_name).get_param(param_name).set_attr( 'VALUE', this.checked );
+    }
+    else {
+        newParams.get_group_params(param_group_name).get_param(param_name).set_attr( 'VALUE', this.value );
     }
 
     // Сделать кнопку сохранения изменения активной
@@ -510,7 +543,7 @@ function addParams(data) {
 function addControl(parent, paramName, attrs) {
     if ( ! attrs ) { return };
 
-    if (attrs.hasOwnProperty("ENUM")) {
+    if ( attrs.hasOwnProperty("ENUM") ) {
         // Создание селекта для любого типа с полем ENUM
 
         // Создать и добавить элемент
@@ -648,7 +681,7 @@ function addControl(parent, paramName, attrs) {
     }
     else {
         // Создание обычного инпута для чисел, строки и даты
-        var input = $('<input type="text" >')
+        var input = $('<input type="text">')
             .attr( 'id', paramName )
             .appendTo(parent);
 

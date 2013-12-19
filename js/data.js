@@ -37,16 +37,16 @@ var DATA_TYPES = {
         MIN:                3.4e-38,
         MAX:                3.4e38,
         ALLOW_CHARS:        /[\d\.]/,
-        FORMAT:             /(^\d+\.\d+$|^\d+$)/,
-        HINT:               "Формат данных: 0.123456",
+        FORMAT:             /(^\d+(\.\d+)?$)/,
+        HINT:               "Формат данных: 0.123",
         ABBREVIATED_NAME:   "f"
     },
     DOUBLE: {
         MIN:                1.7e-308,
         MAX:                1.7e308,
         ALLOW_CHARS:        /[\d\.]/,
-        FORMAT:             /(^\d+\.\d+$|^\d+$)/,
-        HINT:               "Формат данных: 0.123456",
+        FORMAT:             /(^\d+(\.\d+)?$)/,
+        HINT:               "Формат данных: 0.123",
         ABBREVIATED_NAME:   "dbl"
     },
     STRING: {
