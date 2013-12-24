@@ -480,12 +480,13 @@ function addParams(data) {
                 var $tr  = $( '<tr></tr>' ).appendTo( $t_header );
                 var $th1 = $( '<th>Параметр</th>' ).appendTo( $tr );
                 var $th2 = $( '<th>Значение</th>' ).appendTo( $tr );
-                if ( params.has_cancelable_params() ) {
-                    var $th3 = $( '<th>Сбросить</th>' ).appendTo( $tr );
-                }
-                else {
-                    $th2.attr( 'colspan', 2 );
-                }
+                // TODO RESETBTN
+                // if ( params.has_cancelable_params() ) {
+                //     var $th3 = $( '<th>Сбросить</th>' ).appendTo( $tr );
+                // }
+                // else {
+                $th2.attr( 'colspan', 2 );
+                // }
                 $( '<tbody></tbody>' ).appendTo( table );
 
                 // Заполнение таблицы с параметрами
@@ -507,14 +508,15 @@ function addParams(data) {
 
                         addControl(control_group, key, param);
 
+                        // TODO RESETBTN
                         // Создать и добавить кнопку "отменить"
-                        if ( param.is_cancelable() ) {
-                            control_group = $('<td></td>').addClass('col3').appendTo(row);
-                            $( '<a href="#content"><span id="returnArrow" for="' + key + '" class="ui-icon ui-icon-arrowreturnthick-1-w"></span></a>' ).appendTo(control_group);
-                        }
-                        else {
-                            $(control_group).attr( 'colspan', 2 );
-                        }
+                        // if ( param.is_cancelable() ) {
+                        //     control_group = $('<td></td>').addClass('col3').appendTo(row);
+                        //     $( '<a href="#content"><span id="returnArrow" for="' + key + '" class="ui-icon ui-icon-arrowreturnthick-1-w"></span></a>' ).appendTo(control_group);
+                        // }
+                        // else {
+                        $(control_group).attr( 'colspan', 2 );
+                        // }
                     }
                 }
             }
